@@ -21,6 +21,7 @@ def parse_args():
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--dataset-size", type=float, default=1.0)
+    parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument(
         "--train-fraction",
         type=float,
@@ -47,14 +48,14 @@ def run_train(args):
         task_train, args.train_fraction, args.seed
     )
     train_loader = DataLoader(
-        train_ds, batch_size=args.batch_size, shuffle=True
+        train_ds, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers
     )
     val_loader = DataLoader(
-        val_ds, batch_size=args.batch_size, shuffle=False
+        val_ds, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers
     )
 
     test_loader = DataLoader(
-        task_test, batch_size=args.batch_size, shuffle=False
+        task_test, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers
     )
 
     trainer = L.Trainer(max_epochs=args.epochs, logger=wandb_logger)

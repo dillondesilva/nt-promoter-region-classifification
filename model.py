@@ -28,12 +28,13 @@ class AwesomeGenomicModel(nn.Module):
         # Move input_ids and attention_mask to the same device as the weight_vector
         input_ids = input_ids.to(self.weight_vector.device)
         attention_mask = attention_mask.to(self.weight_vector.device)
-        backbone_outs = self.backbone(
-            input_ids,
-            attention_mask=attention_mask,
-            encoder_attention_mask=attention_mask,
-            output_hidden_states=True,
-        )
+        with torch.no_grad():
+            backbone_outs = self.backbone(
+                input_ids,
+                attention_mask=attention_mask,
+                encoder_attention_mask=attention_mask,
+                output_hidden_states=True,
+            )
         hidden_states = torch.stack(backbone_outs.hidden_states, dim=0)
 
         weights = torch.softmax(self.weight_vector, dim=0)

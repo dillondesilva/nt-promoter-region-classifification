@@ -9,7 +9,7 @@ dependencies = [
     "lightning>=2.6.1",
     "wandb>=0.19.0",
     "modal>=1.4.3",
-    "torch>=2.11.0",
+    "torch==2.8.0",
     # Nucleotide Transformer Hub code imports find_pruneable_heads_and_indices from
     # transformers.pytorch_utils; that symbol was removed in transformers 5.8+.
     "transformers>=4.44,<5",
