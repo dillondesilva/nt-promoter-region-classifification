@@ -7,10 +7,14 @@ class PromoterRegionPredictionHead(nn.Module):
         super().__init__()
         self.hidden_size = hidden_size
         self.num_classes = num_classes
-        self.head = nn.Linear(hidden_size, num_classes)
+        self.mlp = nn.Sequential(
+            nn.Linear(hidden_size, hidden_size // 2),
+            nn.ReLU(),
+            nn.Linear(hidden_size // 2, num_classes),
+        )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.head(x)
+        return self.mlp(x)
 
 class AwesomeGenomicModel(nn.Module):
     def __init__(self, device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")):
