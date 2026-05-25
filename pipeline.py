@@ -91,7 +91,7 @@ def update_classification_metrics(
 class LitModule(L.LightningModule):
     """Replace `self.net` and batch unpacking with your model and data."""
 
-    def __init__(self, num_classes: int = 2, lr: float = 3e-4) -> None:
+    def __init__(self, num_classes: int = 2, lr: float = 3e-5) -> None:
         super().__init__()
         self.save_hyperparameters()
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
@@ -175,7 +175,7 @@ class LitModule(L.LightningModule):
         return self._classification_step(batch, "test")
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.genomic_model.parameters(), lr=self.hparams.lr)
+        return torch.optim.AdamW(self.genomic_model.parameters(), lr=self.hparams.lr)
 
 if __name__ == "__main__":
     model = LitModule()
