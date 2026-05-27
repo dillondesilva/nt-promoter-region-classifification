@@ -59,9 +59,9 @@ def run_train(args):
         task_test, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers
     )
 
-    # early stopping callback on validation loss (3 epochs patience)
+    # early stopping callback on validation loss (2 epochs patience)
     callbacks = [
-        EarlyStopping(monitor="val_loss", patience=3, mode="min")
+        EarlyStopping(monitor="val_loss", patience=2, mode="min")
     ]
     trainer = L.Trainer(max_epochs=args.epochs, logger=wandb_logger, callbacks=callbacks)
     trainer.fit(model, train_loader, val_loader)

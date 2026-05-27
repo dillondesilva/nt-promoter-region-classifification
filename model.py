@@ -3,14 +3,14 @@ import torch.nn as nn
 from transformers import AutoModelForMaskedLM
 
 class PromoterRegionPredictionHead(nn.Module):
-    def __init__(self, hidden_size: int, num_classes: int):
+    def __init__(self, hidden_size: int, num_classes: int, mlp_hidden_dim: int = 192):
         super().__init__()
         self.hidden_size = hidden_size
         self.num_classes = num_classes
         self.mlp = nn.Sequential(
-            nn.Linear(hidden_size, hidden_size // 8),
+            nn.Linear(hidden_size, mlp_hidden_dim),
             nn.ReLU(),
-            nn.Linear(hidden_size // 8, num_classes),
+            nn.Linear(mlp_hidden_dim, num_classes),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
