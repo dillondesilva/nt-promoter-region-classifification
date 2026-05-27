@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 from datasets import load_dataset
 from transformers import AutoTokenizer
 import torch
+from lightning.pytorch.callbacks import EarlyStopping
 import modal
 
 MODEL_NAME = "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species"
@@ -58,7 +59,11 @@ def run_train(args):
         task_test, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers
     )
 
-    trainer = L.Trainer(max_epochs=args.epochs, logger=wandb_logger)
+    # early stopping callback on validation loss (3 epochs patience)
+    callbacks = [
+        EarlyStopping(monitor="val_loss", patience=3, mode="min")
+    ]
+    trainer = L.Trainer(max_epochs=args.epochs, logger=wandb_logger, callbacks=callbacks)
     trainer.fit(model, train_loader, val_loader)
     trainer.test(model, test_loader)
 

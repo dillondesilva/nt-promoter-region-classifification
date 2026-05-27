@@ -8,9 +8,9 @@ class PromoterRegionPredictionHead(nn.Module):
         self.hidden_size = hidden_size
         self.num_classes = num_classes
         self.mlp = nn.Sequential(
-            nn.Linear(hidden_size, hidden_size // 2),
+            nn.Linear(hidden_size, hidden_size // 8),
             nn.ReLU(),
-            nn.Linear(hidden_size // 2, num_classes),
+            nn.Linear(hidden_size // 8, num_classes),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
