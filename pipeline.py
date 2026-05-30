@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import lightning as L
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 from model import AwesomeGenomicModel
 from torchmetrics import MetricCollection
@@ -29,14 +28,20 @@ from transformers import AutoTokenizer
 MODEL_NAME = "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species"
 
 
+def _binary_logits(logits: torch.Tensor) -> torch.Tensor:
+    """Scalar logit per example, shape (batch,)."""
+    return logits.squeeze(-1)
+
+
 def compute_classification_metrics(
     logits: torch.Tensor,
     labels: torch.Tensor,
 ) -> dict[str, torch.Tensor]:
-    """Binary classification metrics from logits and integer class labels."""
+    """Binary classification metrics from scalar logits and 0/1 labels."""
     labels = labels.int()
-    probs = F.softmax(logits, dim=-1)[:, 1]
-    preds = logits.argmax(dim=-1)
+    scores = _binary_logits(logits)
+    probs = torch.sigmoid(scores)
+    preds = (probs >= 0.5).long()
     return {
         "auc_roc": binary_auroc(probs, labels),
         "accuracy": binary_accuracy(preds, labels),
@@ -53,8 +58,9 @@ def _preds_probs_labels(
     labels: torch.Tensor,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     labels = labels.int()
-    probs = F.softmax(logits, dim=-1)[:, 1]
-    preds = logits.argmax(dim=-1)
+    scores = _binary_logits(logits)
+    probs = torch.sigmoid(scores)
+    preds = (probs >= 0.5).long()
     return preds, probs, labels
 
 
@@ -91,7 +97,7 @@ def update_classification_metrics(
 class LitModule(L.LightningModule):
     """Replace `self.net` and batch unpacking with your model and data."""
 
-    def __init__(self, num_classes: int = 2, lr: float = 3e-5) -> None:
+    def __init__(self, lr: float = 3e-5) -> None:
         super().__init__()
         self.save_hyperparameters()
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
@@ -150,7 +156,8 @@ class LitModule(L.LightningModule):
     ) -> torch.Tensor:
         input_ids, attention_mask, labels = self.collate_batch(batch)
         logits = self.genomic_model(input_ids, attention_mask)
-        loss = F.cross_entropy(logits, labels)
+        scores = _binary_logits(logits)
+        loss = F.binary_cross_entropy_with_logits(scores, labels.float())
         batch_size = input_ids.size(0)
 
         self.log(
