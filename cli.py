@@ -1,7 +1,7 @@
 import argparse
 import lightning as L
 from lightning.pytorch.loggers import WandbLogger
-from lightning.callbacks import EarlyStopping
+from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from pipeline import LitModule
 from torch.utils.data import DataLoader
 from datasets import load_dataset
