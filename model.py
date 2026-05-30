@@ -21,10 +21,10 @@ class AwesomeGenomicModel(nn.Module):
         self.weight_vector = nn.Parameter(torch.randn(num_layers).to(device))
         self.promoter_region_prediction_head = PromoterRegionPredictionHead(
             self.backbone.config.hidden_size,
-            2,
+            1,
         )
 
-    def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
+    def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor, return_attn_weights: bool = False) -> torch.Tensor:
         # Move input_ids and attention_mask to the same device as the weight_vector
         input_ids = input_ids.to(self.weight_vector.device)
         attention_mask = attention_mask.to(self.weight_vector.device)
@@ -34,12 +34,28 @@ class AwesomeGenomicModel(nn.Module):
                 attention_mask=attention_mask,
                 encoder_attention_mask=attention_mask,
                 output_hidden_states=True,
+                output_attentions=return_attn_weights,
             )
+
         hidden_states = torch.stack(backbone_outs.hidden_states, dim=0)
+        
+        # backbone_outs.attentions is a tuple
+        attn_weights = backbone_outs.attentions
 
         weights = torch.softmax(self.weight_vector, dim=0)
+        most_weighted_layer = weights.argmax().item()
+        
+        # note: regarding attention weights, I am just using
+        # that of the most weighted layer (workaround some OOMs)
+        attn_weights_across_heads = attn_weights[most_weighted_layer]
         weighted_hidden_states = (hidden_states * weights.view(-1, 1, 1, 1)).sum(dim=0)
 
         mask = attention_mask.unsqueeze(-1).float()
         pooled = (weighted_hidden_states * mask).sum(dim=1) / mask.sum(dim=1).clamp(min=1e-9)
+
+        if return_attn_weights:
+            # pool attention heads
+            pooled_attn_weights = attn_weights_across_heads.mean(dim=1)
+            return self.promoter_region_prediction_head(pooled), pooled_attn_weights
+
         return self.promoter_region_prediction_head(pooled)
