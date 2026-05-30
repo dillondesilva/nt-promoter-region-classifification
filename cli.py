@@ -1,6 +1,7 @@
 import argparse
 import lightning as L
 from lightning.pytorch.loggers import WandbLogger
+from lightning.callbacks import EarlyStopping
 from pipeline import LitModule
 from torch.utils.data import DataLoader
 from datasets import load_dataset
@@ -58,7 +59,8 @@ def run_train(args):
         task_test, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers
     )
 
-    trainer = L.Trainer(max_epochs=args.epochs, logger=wandb_logger)
+    callbacks = [EarlyStopping(monitor="val_loss", patience=3)]
+    trainer = L.Trainer(max_epochs=args.epochs, logger=wandb_logger, callbacks=callbacks)
     trainer.fit(model, train_loader, val_loader)
     trainer.test(model, test_loader)
 
