@@ -27,13 +27,14 @@ def parse_args():
         "--train-fraction",
         type=float,
         default=0.8,
-        help="Fraction of task train rows used for training (remainder is validation)",
+        help="Fraction of task train rows used for training (default 0.8 → 80%% train, 20%% val)",
     )
     return parser.parse_args()
 
 def generate_train_val_split(ds, train_fraction: float, seed: int):
-    split = ds.train_test_split(train_size=train_fraction, seed=seed)
-    return split["train"], split["test"]
+    # HF labels the holdout fold "test"; it is val carved from task train, not ds["test"].
+    holdout = ds.train_test_split(test_size=1 - train_fraction, seed=seed)
+    return holdout["train"], holdout["test"]
 
 def run_train(args):
     model = LitModule()

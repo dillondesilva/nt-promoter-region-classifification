@@ -106,23 +106,13 @@ class LitModule(L.LightningModule):
         self.val_metrics = build_classification_metrics()
         self.test_metrics = build_classification_metrics()
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.genomic_model(x)
-
     def collate_batch(
         self,
         batch: dict[str, list] | list[dict[str, object] | tuple[str, int]],
         max_length: int = 512,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        if isinstance(batch, dict):
-            sequences = list(batch["sequence"])
-            labels = torch.tensor(batch["label"], dtype=torch.long)
-        elif isinstance(batch[0], dict):
-            sequences = [item["sequence"] for item in batch]
-            labels = torch.tensor([item["label"] for item in batch], dtype=torch.long)
-        else:
-            sequences = [item[0] for item in batch]
-            labels = torch.tensor([item[1] for item in batch], dtype=torch.long)
+        sequences = list(batch["sequence"])
+        labels = torch.tensor(batch["label"], dtype=torch.long)
         enc = self.tokenizer.batch_encode_plus(
             sequences,
             return_tensors="pt",
