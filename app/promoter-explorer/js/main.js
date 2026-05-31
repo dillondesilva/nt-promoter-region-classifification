@@ -1,8 +1,11 @@
 import { runInference, parseLogit } from './api.js';
+import { loadExampleCatalog } from './examples.js';
 import {
   $,
   sanitizeSequence,
   renderExamples,
+  setExamplesMeta,
+  setExamplesLoadError,
   updateLength,
   setLoading,
   setError,
@@ -47,15 +50,23 @@ function loadSequence(seq) {
   setError('');
 }
 
-function init() {
-  renderExamples(loadSequence);
-
+async function init() {
   $('seqInput').addEventListener('input', () => {
     updateLength(sanitizeSequence($('seqInput').value));
   });
-
   $('classifyBtn').addEventListener('click', classify);
   updateLength('');
+
+  try {
+    const catalog = await loadExampleCatalog();
+    renderExamples(catalog, loadSequence);
+    setExamplesMeta(catalog);
+  } catch (err) {
+    setExamplesLoadError(
+      err.message ||
+        'Could not load examples. Serve this folder over HTTP (e.g. python -m http.server) so data/examples.json can be fetched.'
+    );
+  }
 }
 
 init();
