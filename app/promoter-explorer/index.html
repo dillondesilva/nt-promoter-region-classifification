@@ -10,14 +10,28 @@
 <body>
   <div class="app">
     <header class="header">
-      <div class="header-label">Genomics · Classifier</div>
       <h1>Promoter Region Explorer</h1>
       <p class="header-author">By <a href="https://www.dillondesilva.com/" target="_blank" rel="noopener noreferrer">Dillon de Silva</a></p>
-      <p>Classify DNA sequences with a <a href="https://www.nature.com/articles/s41592-024-02523-z" target="_blank" rel="noopener noreferrer">nucleotide transformer</a>. Click an example or paste a sequence, then run inference.</p>
+      <p>Determine if a DNA sequence is a promoter region with <a href="https://www.nature.com/articles/s41592-024-02523-z" target="_blank" rel="noopener noreferrer">Nucleotide Transformer</a>. Click an example or paste a sequence, then run inference.</p>
     </header>
 
-    <p class="examples-label">Example sequences (300 bp)</p>
-    <div class="examples-grid" id="examplesGrid"></div>
+    <section class="examples-panel" aria-labelledby="examples-heading">
+      <div class="examples-header">
+        <h2 class="examples-label" id="examples-heading">DeePromoter test-set examples</h2>
+        <p class="examples-meta" id="examplesMeta">Loading…</p>
+      </div>
+      <p class="examples-intro">
+        Examples are drawn from the
+        <a id="datasetLink" href="https://huggingface.co/datasets/InstaDeepAI/nucleotide_transformer_downstream_tasks" target="_blank" rel="noopener noreferrer">nucleotide_transformer_downstream_tasks</a>
+        test split. Three promoter tasks from DeePromoter:
+        <strong>Promoter (All)</strong> (TATA + non-TATA),
+        <strong>Promoter (TATA)</strong> (TATA-box promoters only — label&nbsp;1 means a TATA-containing promoter),
+        and <strong>Promoter (No TATA)</strong> (promoters without a TATA box).
+        Label&nbsp;0 is always a matched non-promoter control from the same protocol.
+      </p>
+      <div id="examplesRoot"></div>
+      <p class="examples-load-error" id="examplesLoadError" hidden></p>
+    </section>
 
     <section class="input-section">
       <label for="seqInput">Input sequence</label>
