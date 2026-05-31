@@ -93,19 +93,83 @@ body::before {
   text-decoration: underline;
 }
 
+.examples-panel {
+  margin-bottom: 32px;
+}
+
+.examples-header {
+  margin-bottom: 10px;
+}
+
 .examples-label {
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.examples-meta {
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.examples-intro {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.65;
+  max-width: 720px;
+  margin-bottom: 20px;
+}
+
+.examples-intro a {
+  color: var(--accent-a);
+  text-decoration: none;
+}
+
+.examples-intro a:hover {
+  text-decoration: underline;
+}
+
+.examples-intro strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.examples-load-error {
+  font-size: 12px;
+  color: var(--negative);
+  line-height: 1.5;
+}
+
+.example-section {
+  margin-bottom: 28px;
+}
+
+.section-header {
   margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 6px;
+}
+
+.section-blurb {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.55;
+  max-width: 720px;
 }
 
 .examples-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 12px;
-  margin-bottom: 32px;
 }
 
 .example-card {
@@ -138,18 +202,47 @@ body::before {
 
 .example-card:hover::before { opacity: 1; }
 
+.card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
 .card-title {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-bright);
-  margin-bottom: 4px;
 }
 
-.card-desc {
+.label-badge {
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.label-badge.positive {
+  color: var(--positive);
+  background: rgba(5, 150, 105, 0.08);
+  border: 1px solid rgba(5, 150, 105, 0.25);
+}
+
+.label-badge.negative {
+  color: var(--negative);
+  background: rgba(220, 38, 38, 0.06);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.card-name {
   font-size: 10px;
   color: var(--text-dim);
-  margin-bottom: 10px;
-  line-height: 1.5;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  word-break: break-all;
 }
 
 .card-seq {
