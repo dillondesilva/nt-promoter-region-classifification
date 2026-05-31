@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promoter Region Explorer</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-label">Genomics · Classifier</div>
+      <h1>Promoter Region Explorer</h1>
+      <p class="header-author">By <a href="https://www.dillondesilva.com/" target="_blank" rel="noopener noreferrer">Dillon de Silva</a></p>
+      <p>Classify DNA sequences with a <a href="https://www.nature.com/articles/s41592-024-02523-z" target="_blank" rel="noopener noreferrer">nucleotide transformer</a>. Click an example or paste a sequence, then run inference.</p>
+    </header>
+
+    <p class="examples-label">Example sequences (300 bp)</p>
+    <div class="examples-grid" id="examplesGrid"></div>
+
+    <section class="input-section">
+      <label for="seqInput">Input sequence</label>
+      <textarea class="seq-input" id="seqInput" placeholder="Paste a DNA sequence (A, T, G, C)…" spellcheck="false"></textarea>
+      <div class="input-meta">
+        <span class="seq-length" id="seqLength">0 bp</span>
+        <button type="button" class="classify-btn" id="classifyBtn">Classify</button>
+      </div>
+      <p class="wait-hint" id="waitHint" hidden>This may take a couple of minutes.</p>
+      <div class="loading-bar" id="loadingBar" hidden></div>
+      <p class="error-msg" id="errorMsg" hidden></p>
+    </section>
+
+    <section class="results" id="results" hidden></section>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
