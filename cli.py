@@ -42,8 +42,6 @@ def run_test(args):
     model_path = args.model_path
     wandb_logger = WandbLogger(project="experiment-with-genomics")
     model = LitModule.load_from_checkpoint(model_path)
-    model = model.genomic_model
-    model.eval()
     ds = load_dataset(DATASET_NAME)
     task_test = ds["test"].filter(lambda x: x["task"] == TASK_NAME)
     test_loader = DataLoader(
