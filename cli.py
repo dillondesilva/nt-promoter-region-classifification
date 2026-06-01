@@ -6,8 +6,6 @@ from pipeline import LitModule
 from torch.utils.data import DataLoader
 from datasets import load_dataset
 from transformers import AutoTokenizer
-import torch
-import modal
 
 MODEL_NAME = "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species"
 MAX_LENGTH = 512
@@ -17,6 +15,8 @@ TASK_NAME = "promoter_all"
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--train", action="store_true")
+    parser.add_argument("--test", action="store_true")
+    parser.add_argument("--model-path", type=str, default=None)
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--lr", type=float, default=3e-4)
@@ -35,6 +35,24 @@ def generate_train_val_split(ds, train_fraction: float, seed: int):
     # HF labels the holdout fold "test"; it is val carved from task train, not ds["test"].
     holdout = ds.train_test_split(test_size=1 - train_fraction, seed=seed)
     return holdout["train"], holdout["test"]
+
+def run_test(args):
+    if args.model_path is None:
+        raise ValueError("Model path is required for testing")
+    model_path = args.model_path
+    wandb_logger = WandbLogger(project="experiment-with-genomics")
+    model = LitModule.load_from_checkpoint(model_path)
+    model = model.genomic_model
+    model.eval()
+    ds = load_dataset(DATASET_NAME)
+    task_test = ds["test"].filter(lambda x: x["task"] == TASK_NAME)
+    test_loader = DataLoader(
+        task_test, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers
+    )
+
+    trainer = L.Trainer(max_epochs=args.epochs, logger=wandb_logger)
+    trainer.test(model, test_loader)
+    wandb_logger.finish()
 
 def run_train(args):
     model = LitModule()
@@ -70,3 +88,5 @@ if __name__ == "__main__":
     args = parse_args()
     if args.train:
         run_train(args)
+    elif args.test:
+        run_test(args)
