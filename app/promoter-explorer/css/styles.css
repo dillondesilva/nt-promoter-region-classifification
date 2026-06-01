@@ -200,7 +200,35 @@ body::before {
   background: var(--surface-2);
 }
 
-.example-card:hover::before { opacity: 1; }
+.example-card:hover::before,
+.example-card.is-selected::before { opacity: 1; }
+
+.example-card.is-selected {
+  border-color: var(--accent-a);
+  background: var(--accent-a-dim);
+  box-shadow: 0 0 0 2px var(--accent-a-dim);
+}
+
+.card-action-hint {
+  margin-top: 10px;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--accent-a);
+  opacity: 0.55;
+  transition: opacity 0.2s;
+}
+
+.example-card:hover .card-action-hint,
+.example-card.is-selected .card-action-hint,
+.example-card:focus-visible .card-action-hint {
+  opacity: 1;
+}
+
+.example-card:focus-visible {
+  outline: 2px solid var(--accent-a);
+  outline-offset: 2px;
+}
 
 .card-head {
   display: flex;
@@ -259,6 +287,12 @@ body::before {
   border-radius: var(--radius);
   padding: 20px;
   margin-bottom: 24px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.input-section.input-highlight {
+  border-color: var(--accent-a);
+  box-shadow: 0 0 0 3px var(--accent-a-dim);
 }
 
 .input-section label {
@@ -267,7 +301,26 @@ body::before {
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.input-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.45;
   margin-bottom: 10px;
+}
+
+.seq-fill-status {
+  min-height: 1.2em;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--accent-a);
+  line-height: 1.4;
+}
+
+.seq-fill-status:empty {
+  display: none;
 }
 
 .seq-input {
@@ -288,6 +341,15 @@ body::before {
 .seq-input:focus {
   border-color: var(--accent-a);
   box-shadow: 0 0 0 2px var(--accent-a-dim);
+}
+
+.seq-input.seq-flash {
+  animation: seqFlash 0.9s ease;
+}
+
+@keyframes seqFlash {
+  0%, 100% { background: var(--bg); }
+  25% { background: var(--accent-a-dim); }
 }
 
 .input-meta {

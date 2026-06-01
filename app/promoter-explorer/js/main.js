@@ -7,6 +7,7 @@ import {
   setExamplesMeta,
   setExamplesLoadError,
   updateLength,
+  fillSequenceFromExample,
   setLoading,
   setError,
   renderResults,
@@ -43,16 +44,18 @@ async function classify() {
   }
 }
 
-function loadSequence(seq) {
-  $('seqInput').value = seq;
-  updateLength(seq);
-  hideResults();
-  setError('');
+function loadSequence(seq, card) {
+  const title = card?.querySelector('.card-title')?.textContent?.trim() || '';
+  fillSequenceFromExample(seq, card, title);
 }
 
 async function init() {
   $('seqInput').addEventListener('input', () => {
     updateLength(sanitizeSequence($('seqInput').value));
+    document.querySelectorAll('.example-card.is-selected').forEach((el) => {
+      el.classList.remove('is-selected');
+    });
+    $('seqFillStatus').textContent = '';
   });
   $('classifyBtn').addEventListener('click', classify);
   updateLength('');

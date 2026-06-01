@@ -12,7 +12,7 @@
     <header class="header">
       <h1>Promoter Region Explorer</h1>
       <p class="header-author">By <a href="https://www.dillondesilva.com/" target="_blank" rel="noopener noreferrer">Dillon de Silva</a></p>
-      <p>Determine if a DNA sequence is a promoter region with <a href="https://www.nature.com/articles/s41592-024-02523-z" target="_blank" rel="noopener noreferrer">Nucleotide Transformer</a>. Click an example or paste a sequence, then run inference.</p>
+      <p>Determine if a DNA sequence is a promoter region with <a href="https://www.nature.com/articles/s41592-024-02523-z" target="_blank" rel="noopener noreferrer">Nucleotide Transformer</a>. Click an example to load it into the input, or paste your own sequence, then run inference.</p>
     </header>
 
     <section class="examples-panel" aria-labelledby="examples-heading">
@@ -33,9 +33,11 @@
       <p class="examples-load-error" id="examplesLoadError" hidden></p>
     </section>
 
-    <section class="input-section">
-      <label for="seqInput">Input sequence</label>
-      <textarea class="seq-input" id="seqInput" placeholder="Paste a DNA sequence (A, T, G, C)…" spellcheck="false"></textarea>
+    <section class="input-section" id="inputSection" aria-labelledby="seqInputLabel">
+      <label for="seqInput" id="seqInputLabel">Input sequence</label>
+      <p class="input-hint">Click any example card to load its sequence here.</p>
+      <textarea class="seq-input" id="seqInput" placeholder="Paste a DNA sequence (A, T, G, C)…" spellcheck="false" aria-describedby="seqFillStatus"></textarea>
+      <p class="seq-fill-status" id="seqFillStatus" role="status" aria-live="polite"></p>
       <div class="input-meta">
         <span class="seq-length" id="seqLength">0 bp</span>
         <button type="button" class="classify-btn" id="classifyBtn">Classify</button>

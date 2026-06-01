@@ -25,13 +25,14 @@ function labelBadge(label) {
 
 function renderExampleCard(ex) {
   return `
-    <article class="example-card" data-seq="${escapeHtml(ex.seq)}" tabindex="0" role="button">
+    <article class="example-card" data-seq="${escapeHtml(ex.seq)}" tabindex="0" role="button" aria-label="Load example: ${escapeHtml(ex.title)}">
       <div class="card-head">
         <div class="card-title">${escapeHtml(ex.title)}</div>
         ${labelBadge(ex.label)}
       </div>
       <div class="card-name">${escapeHtml(ex.name)}</div>
       <div class="card-seq">${escapeHtml(ex.seq.slice(0, 48))}…</div>
+      <p class="card-action-hint">Click to load sequence →</p>
     </article>`;
 }
 
@@ -53,7 +54,7 @@ export function renderExamples(catalog, onSelect) {
     .join('');
 
   root.querySelectorAll('.example-card').forEach((card) => {
-    const pick = () => onSelect(card.dataset.seq);
+    const pick = () => onSelect(card.dataset.seq, card);
     card.addEventListener('click', pick);
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
@@ -79,6 +80,34 @@ export function setExamplesLoadError(msg) {
 
 export function updateLength(seq) {
   $('seqLength').textContent = `${seq.length} bp`;
+}
+
+export function fillSequenceFromExample(seq, card, title) {
+  const input = $('seqInput');
+  const section = $('inputSection');
+  input.value = seq;
+  updateLength(seq);
+  hideResults();
+  setError('');
+
+  document.querySelectorAll('.example-card').forEach((el) => {
+    el.classList.toggle('is-selected', el === card);
+  });
+
+  section.classList.remove('input-highlight');
+  void section.offsetWidth;
+  section.classList.add('input-highlight');
+  input.classList.remove('seq-flash');
+  void input.offsetWidth;
+  input.classList.add('seq-flash');
+
+  const status = $('seqFillStatus');
+  status.textContent = title
+    ? `Loaded “${title}” — ${seq.length} bp. Run Classify when ready.`
+    : `Example loaded — ${seq.length} bp.`;
+
+  section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  input.focus({ preventScroll: true });
 }
 
 export function setLoading(on) {
